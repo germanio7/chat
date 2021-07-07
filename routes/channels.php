@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Chat;
 use Illuminate\Support\Facades\Broadcast;
 
 /*
@@ -15,4 +16,12 @@ use Illuminate\Support\Facades\Broadcast;
 
 Broadcast::channel('App.Models.User.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
+});
+
+Broadcast::channel('chat.{chatId}', function ($user, $chatId) {
+    $chat = Chat::find($chatId);
+    $aux = array_filter($chat->users, function($item) use($user){
+        return $item['id'] != $user->id;
+    });
+    return count($aux) < 2;
 });
