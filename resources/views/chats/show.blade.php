@@ -50,6 +50,22 @@
             </div>
          @endif
        @endforeach
+       <div hidden id="nuevos" class="chat-message">
+         <div class="flex items-end">
+            <div class="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-2 items-start">
+               <div><span id="text_nuevos" class="px-4 py-2 rounded-lg inline-block rounded-bl-none bg-gray-300 text-gray-600"></span></div>
+            </div>
+            <img src="https://images.unsplash.com/photo-1549078642-b2ba4bda0cdb?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=facearea&amp;facepad=3&amp;w=144&amp;h=144" alt="My profile" class="w-6 h-6 rounded-full order-1">
+         </div>
+      </div> 
+      <div hidden id="enviados" class="chat-message">
+         <div class="flex items-end justify-end">
+            <div class="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-1 items-end">
+               <div><span id="text_enviados" class="px-4 py-2 rounded-lg inline-block rounded-br-none bg-blue-600 text-white "></span></div>
+            </div>
+            <img src="https://images.unsplash.com/photo-1590031905470-a1a1feacbb0b?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=facearea&amp;facepad=3&amp;w=144&amp;h=144" alt="My profile" class="w-6 h-6 rounded-full order-2">
+         </div>
+      </div>
     </div>
     <div class="border-t-2 border-gray-200 px-4 pt-4 mb-2 sm:mb-0">
        <div class="relative flex">
@@ -107,7 +123,12 @@
 
   Echo.private(`chat.${chat.id}`)
     .listen('NewMessage', (e) => {
-        document.getElementById("messages").append(e.message.content);
+      //   document.getElementById("nuevos").style.display = "block"
+      //   document.getElementById("text_nuevos").innerHTML = e.message.content;
+
+      var cadena = '<div class="flex items-end"><div class="flex flex-col space-y-2 text-xs max-w-xs mx-2 order-2 items-start"><div><span id="text_nuevos" class="px-4 py-2 rounded-lg inline-block rounded-bl-none bg-gray-300 text-gray-600">'+e.message.content+'</span></div></div><img src="https://images.unsplash.com/photo-1549078642-b2ba4bda0cdb?ixlib=rb-1.2.1&amp;ixid=eyJhcHBfaWQiOjEyMDd9&amp;auto=format&amp;fit=facearea&amp;facepad=3&amp;w=144&amp;h=144" alt="My profile" class="w-6 h-6 rounded-full order-1"></div>'
+
+      document.getElementById("nuevos").insertAdjacentHTML('afterend', cadena);
     });
 </script>
 
