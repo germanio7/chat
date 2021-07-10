@@ -19,8 +19,7 @@ class CreateMessagesTable extends Migration
             $table->id();
             $table->foreignId('chat_id')->constrained()->cascadeOnDelete();
             $table->text('content');
-            $table->unsignedBigInteger('sender_id');
-            $table->unsignedBigInteger('receiver_id');
+            $table->unsignedBigInteger('user_id');
             $table->timestamp('read_at')->nullable();
             $table->timestamps();
         });

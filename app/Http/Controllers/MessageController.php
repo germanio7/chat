@@ -12,27 +12,16 @@ class MessageController extends Controller
 {
     public function store(Request $request)
     {
-        $request->validate(['content'=>'required|min:3']);
+        $request->validate(['content' => 'required|min:3']);
 
-        $chat = Chat::with(['messages'])->findOrFail($request->chat_id);
-
-        $aux = array_filter($chat->users, function($item){
-            return $item['id'] != auth()->user()->id;
-        });
-
-        $aux = array_values($aux);
-
-        $receiver_id = User::findOrFail($aux[0]['id']);
-
-        $message = Message::create([
-            "chat_id"=> $chat->id,
-            'sender_id' => auth()->user()->id,
-            'receiver_id' => $receiver_id->id,
-            "content" => $request->content
-        ]);
+        $message = auth()->user()->messages()->create([
+            "content" => $request->content,
+            'chat_id' => $request->chat_id
+        ])->load('user');
 
         broadcast(new NewMessage($message))->toOthers();
 
-        return redirect()->action([ChatController::class, 'show'], $chat->id);
+        return $message;
+        // return redirect()->action([ChatController::class, 'show'], $message->chat->id);
     }
 }

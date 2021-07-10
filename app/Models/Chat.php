@@ -11,23 +11,9 @@ class Chat extends Model
 
     protected $guarded = [];
 
-    protected $casts = [
-        'users' => 'array',
-    ];
-
-    public function setUsers($value)
+    public function users()
     {
-        if (!is_array($value)) {
-            $value = json_decode($value);
-        }
-
-        $users = [];
-
-        foreach ($value as $array_item) {
-            $users[] = $array_item;
-        }
-
-        $this->attributes['users'] = json_encode($users);
+        return $this->belongsToMany(User::class);
     }
 
     public function messages()
@@ -37,6 +23,6 @@ class Chat extends Model
 
     public function not_read_messages()
     {
-        return $this->messages()->where('read_at', null)->where('receiver_id', auth()->user()->id);
+        return $this->messages()->where('read_at', null)->where('user_id', '!=', auth()->user()->id);
     }
 }

@@ -10,7 +10,9 @@ class ChatController extends Controller
 {
     public function index()
     {
-        $chats = Chat::with('not_read_messages')->whereJsonContains('users', ['id' => auth()->user()->id])->get();
+        $chats = Chat::whereHas('users', function ($q) {
+            $q->where('chat_user.user_id', auth()->id());
+        })->get();
         return view('chats.index', compact('chats'));
     }
 
@@ -22,37 +24,37 @@ class ChatController extends Controller
 
     public function store(Request $request)
     {
-        $receiver = User::findOrFail($request->receiver_id);
-        $last = Chat::latest()->first();
-        $name = 'chat-1';
-        
-        if (is_object($last)) {
-            $id = ($last->id*1) + 1;
-            $name = 'chat-' . $id;
+        $user_a = auth()->user();
+        $user_b = User::findOrFail($request->receiver_id);
+
+        $chat = $user_a->chats()->whereHas('users', function ($q) use ($user_b) {
+            $q->where('chat_user.user_id', $user_b->id);
+        })->first();
+
+        if (!$chat) {
+            $chat = Chat::create([]);
+            $chat->users()->sync([$user_a->id, $user_b->id]);
         }
 
-        if (auth()->user()->role == 'teacher') {
-            $users = [['id' => auth()->user()->id], ['id' => $receiver->id]];
-        } else $users = [['id' => $receiver->id], ['id' => auth()->user()->id]];
-
-        $chat = Chat::whereJsonContains('users', $users)->get()->first();
-
-        if (!is_object($chat)) {
-            $chat = Chat::create([
-                'name' => $name,
-                'users' => $users
-            ]);
-        }
-        
         return redirect()->action([ChatController::class, 'show'], $chat->id);
     }
 
     public function show($id)
     {
-        $chat = Chat::with('not_read_messages')->findOrFail($id);
+        $chat = Chat::findOrFail($id);
         $chat->not_read_messages()->update([
             'read_at' => now()
         ]);
+        abort_unless($chat->users->contains(auth()->id()), 403);
         return view('chats.show', compact('chat'));
+    }
+
+    public function get_messages(Chat $chat)
+    {
+        $messages = $chat->messages()->with('user')->get();
+
+        return response()->json([
+            'messages' => $messages
+        ]);
     }
 }

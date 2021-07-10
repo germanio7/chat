@@ -23,9 +23,21 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth'])->name('dashboard');
 
-Route::middleware(['auth'])->group(function() {
+Route::middleware(['auth'])->group(function () {
     Route::resource('messages', MessageController::class);
     Route::resource('chats', ChatController::class);
 });
 
-require __DIR__.'/auth.php';
+Route::get('getUser', function () {
+
+    if (auth()->check())
+        return response()->json([
+            'authUser' => auth()->user()
+        ]);
+
+    return null;
+});
+
+Route::get('/chats/{chat}/get_messages/', [ChatController::class, 'get_messages'])->name('chat.get_messages');
+
+require __DIR__ . '/auth.php';
