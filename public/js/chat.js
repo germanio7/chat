@@ -74,11 +74,10 @@ function appendMessages(messages) {
 }
 
 function appendMessage(name, side, $otro, text) {
-    //   Simple solution for small apps
     const msgHTML = `<div class="flex items-end ${side}">
-        <div class="flex flex-col space-y-2 text-xs max-w-xs mx-2 ${$otro}">
+        <div class="flex flex-col space-y-2 text-xs max-w-xs mx-2 ${$otro} mb-1">
             <div>
-                <span id="text_nuevos" class="px-4 py-2 rounded-lg inline-block rounded-bl-none bg-gray-300 text-gray-600">
+                <span class="px-4 py-2 rounded-lg inline-block rounded-bl-none bg-gray-300 text-gray-600">
                     ${text}
                 </span>
             </div> 

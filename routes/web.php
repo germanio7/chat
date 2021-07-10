@@ -29,12 +29,10 @@ Route::middleware(['auth'])->group(function () {
 });
 
 Route::get('getUser', function () {
-
     if (auth()->check())
         return response()->json([
             'authUser' => auth()->user()
         ]);
-
     return null;
 });
 
